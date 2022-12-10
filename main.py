@@ -2,6 +2,8 @@ import aiosqlite
 import os
 import discord
 from discord.ext import commands
+from Interface.Buttons.SuggestionButtons import SuggestionButtons
+from Interface.Buttons.ReportButtons import ReportButtons
 import config
 
 intents = discord.Intents.default()
@@ -21,6 +23,8 @@ class Lunar(commands.AutoShardedBot):
 
     async def setup_hook(self):
         self.database = await aiosqlite.connect("./Databases/data.db")
+        self.add_view(SuggestionButtons())
+        self.add_view(ReportButtons())
         for filename in os.listdir("./Commands"):
             if filename.endswith('.py'):
                 await self.load_extension(f"Commands.{filename[:-3]}")
@@ -51,6 +55,8 @@ bot = Lunar()
 
 @bot.event
 async def on_ready():
+    await bot.database.execute("CREATE TABLE IF NOT EXISTS ReportsAndSuggestions (guild_id, user_id, message_id, title, content, upvotes, downvotes, PRIMARY KEY (message_id))")
+    await bot.database.execute("CREATE TABLE IF NOT EXISTS DataTransfer (guild_id, variable_1, variable_2, variable_3, PRIMARY KEY (guild_id))")
     await bot.database.execute("CREATE TABLE IF NOT EXISTS PremiumGuilds (guild_id, owner_id, PRIMARY KEY(guild_id))")
     await bot.database.execute("CREATE TABLE IF NOT EXISTS NotificationView (user_id, status, PRIMARY KEY (user_id))")
     print(f"{bot.user} is connected to Discord, current latency is {round(bot.latency * 1000)}ms")
@@ -72,6 +78,8 @@ async def load(ctx: commands.Context, folder:str, cog:str):
 @bot.command()
 @commands.is_owner()
 async def database_reload(ctx: commands.Context):
+    await bot.database.execute("CREATE TABLE IF NOT EXISTS ReportsAndSuggestions (guild_id, user_id, message_id, title, content, upvotes, downvotes, PRIMARY KEY (message_id))")
+    await bot.database.execute("CREATE TABLE IF NOT EXISTS DataTransfer (guild_id, variable_1, variable_2, variable_3, PRIMARY KEY (guild_id))")
     await bot.database.execute("CREATE TABLE IF NOT EXISTS PremiumGuilds (guild_id, owner_id, PRIMARY KEY(guild_id))")
     await bot.database.execute("CREATE TABLE IF NOT EXISTS NotificationView (user_id, status, PRIMARY KEY (user_id))")
     

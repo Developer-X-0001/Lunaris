@@ -10,7 +10,7 @@ class SuggestionButtons(View):
     
     @button(label="Reply", style=ButtonStyle.green, custom_id="reply_button")
     async def reply_func(self, interaction: discord.Interaction, button: Button):
-        role = interaction.guild.get_role(1004052000415162398)
+        role = interaction.guild.get_role(1051186674627002409)
         if role in interaction.user.roles:
             await interaction.response.send_modal(SuggestionReplyModal())
         else:
