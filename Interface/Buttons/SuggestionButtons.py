@@ -31,7 +31,7 @@ class SuggestionButtons(View):
     @button(style=ButtonStyle.red, emoji="✖", custom_id="delete_suggestion")
     async def suggestion_delete(self, interaction: discord.Interaction, button: Button):
         await interaction.response.defer()
-        mod_role = interaction.guild.get_role(1004051984640389141)
+        mod_role = interaction.guild.get_role(1051186674627002409)
         if mod_role in interaction.user.roles:
             await interaction.client.database.execute(f"DELETE FROM ReportsAndSuggestions WHERE message_id = {interaction.message.id}")
             await interaction.client.database.commit()
