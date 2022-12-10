@@ -9,7 +9,7 @@ class AirQuality(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
     
-    @app_commands.command(name="air-quality", description="get up to date air quality information.")
+    @app_commands.command(name="air-quality", description="Get up to date air quality information.")
     @app_commands.describe(location="Type the city name", hidden="Choose wether to show information publicly or privately.")
     @app_commands.choices(
         hidden=[
