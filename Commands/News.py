@@ -9,9 +9,9 @@ class News(commands.Cog):
     @app_commands.command(name="news", description="Check latest news or messages sent by the developers.")
     async def news(self, interaction: discord.Interaction):
         embed = discord.Embed(
-            title="Latest Message | August 27, 2022",
-            description="**Subject:** 🎉 Celebrating 2k Servers!\n\n<:cleaner:954598059952734268> **Cleaner#8788** is reaching 2000 servers, keeping them clean and providing quality services. On September 3rd, 2022 we are going to have live stream on our Stage Channel in [Cleaner's Support Server](https://discord.gg/QrFEfNuC5m). Make sure to join us, I (Developer X) will be there to answer your questions and also we may play some games together 😉. So yeah stay tuned with us!\n\nRegards,\n*Developer X#0001*",
-            color=discord.Color.magenta()
+            title="Latest Message | December 10, 2022",
+            description="**Subject:** Lunaris Launched.\n\n<:lunaris:1050333875613732894> Introducing **Lunaris!**\nA beautifully designed Meteorological Utility.\nLunaris is packed with multiple astronomical commands, you can get latest weather information, forecast information, astronomical information, air quality information and alot more!\nJoin Lunaris support server https://discord.gg/invite/j6h9zZNPaJ and share your thoughts with us!\n\nRegards,\n*Developer X#0001*",
+            color=discord.Color.blurple()
         )
         embed.set_thumbnail(url=interaction.client.user.avatar.url)
 
