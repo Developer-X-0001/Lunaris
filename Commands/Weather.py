@@ -9,15 +9,19 @@ class Weather(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         
-    @app_commands.command(name="weather", description="View weather of a location.")
-    @app_commands.describe(location="Type the city name")
+    @app_commands.command(name="weather", description="Get up to date current weather information.")
+    @app_commands.describe(location="Type the city name", hidden="Choose wether to show information publicly or privately.")
     @app_commands.choices(
         units=[
             app_commands.Choice(name="Imperial", value="imperial"),
             app_commands.Choice(name="Metric", value="metric")
+        ],
+        hidden=[
+            app_commands.Choice(name="True", value=1),
+            app_commands.Choice(name="False", value=0)
         ]
     )
-    async def weather(self, interaction: discord.Interaction, location: str, units: app_commands.Choice[str]):
+    async def weather(self, interaction: discord.Interaction, location: str, units: app_commands.Choice[str], hidden: app_commands.Choice[int]):
         request_url = requests.get(f"http://api.weatherapi.com/v1/current.json?key={config.WEATHER_API_KEY}&q={location}&aqi=no")
         response = request_url.json()
 
@@ -28,11 +32,13 @@ class Weather(commands.Cog):
         city = location["name"]
         region = location["region"]
         country = location["country"]
+        if country == "United States of America":
+            country = "United States"
         get_country = pycountry.countries.get(name=country)
 
         # ---------- Co-Ordinates Data ----------
-        latitude = str(round(location["lat"])) + "º"
-        longitude = str(round(location["lon"])) + "º"
+        latitude = str(round(location["lat"], ndigits=2)) + "º"
+        longitude = str(round(location["lon"], ndigits=2)) + "º"
 
         # ---------- Time Data ----------
         timezone = location["tz_id"]
@@ -45,7 +51,17 @@ class Weather(commands.Cog):
         winddirection = weather["wind_dir"]
         pressure = str(round(weather["pressure_mb"])) + "mBar"
         visibility = str(round(weather["vis_km"])) + "km"
-        uv = weather["uv"]
+        uv = int(weather["uv"])
+        if 2 >= uv >= 1:
+            uv = str(weather["uv"]) + " (Low)"
+        elif 5 >= uv >= 3:
+            uv = str(weather["uv"]) + " (Medium)"
+        elif 7 >= uv >= 6:
+            uv = str(weather["uv"]) + " (High)"
+        elif 10 >= uv >= 8:
+            uv = str(weather["uv"]) + " (Very High)"
+        elif uv >= 11:
+            uv = str(weather["uv"]) + " (Extremely High)"
         if units.value == "imperial":
             windspeed = str(round(weather["wind_mph"])) + "mp/h"
             pressure = str(round(weather["pressure_in"])) + "in"
@@ -70,7 +86,7 @@ class Weather(commands.Cog):
         )
         weather_embed.add_field(
             name="<:city:1050876004597510224> **__City Information:__**",
-            value=f"Name: {city}\nRegion: {region}\nCountry: {country} :flag_{str(get_country.alpha_2).lower()}:\nLocation: {latitude}, {longitude}\nTimezone: {timezone}\nLocal Time: {localtime}",
+            value=f"Name: {city}\nRegion: {region}\nCountry: {country} :flag_{str(get_country.alpha_2).lower()}:\nLocation: {latitude} Latitude, {longitude} Longitude\nTimezone: {timezone}\nLocal Time: {localtime}",
             inline=False
         )
         weather_embed.add_field(
@@ -85,7 +101,10 @@ class Weather(commands.Cog):
         )
         weather_embed.set_thumbnail(url=f"https://countryflagsapi.com/png/{get_country.alpha_2}")
 
-        await interaction.response.send_message(embed=weather_embed)
+        if hidden.value == 1:
+            await interaction.response.send_message(embed=weather_embed, ephemeral=True)
+        if hidden.value == 0:
+            await interaction.response.send_message(embed=weather_embed)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(
