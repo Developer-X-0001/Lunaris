@@ -3,7 +3,7 @@ import config
 
 changelog_embed = discord.Embed(
     description="Nothing to see here 👀",
-    colour=discord.Color.magenta()
+    colour=discord.Color.blurple()
 )
 
 changelog_embed.set_author(name='Last Updated on December 10, 2022', icon_url='https://i.imgur.com/fC3ZjuV.png')

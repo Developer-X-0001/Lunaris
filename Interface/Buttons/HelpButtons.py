@@ -3,8 +3,8 @@ import discord
 import config
 
 from discord.ui import View, button, Button
-from Embeds.HelpEmbed import help_embed
-from Embeds.NotificationEmbed import notification_embed
+from Interface.Embeds.HelpEmbed import help_embed
+from Interface.Embeds.NotificationEmbed import notification_embed
 
 class HelpButtons(View):
     def __init__(self):
@@ -55,7 +55,7 @@ class HelpGoBackButtons(View):
         resp_embed = discord.Embed(
             title="Where do you want to receive the help page?",
             description="Here? or in DMs?",
-            color=discord.Color.magenta()
+            color=discord.Color.blurple()
         )
         resp_embed.set_footer(text=f"Cleaner#8788 v{config.BOT_VERSION}")
         await interaction.response.edit_message(embed=resp_embed, view=HelpButtons())

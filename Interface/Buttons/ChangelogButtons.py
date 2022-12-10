@@ -55,7 +55,7 @@ class ChangelogGoBackButtons(View):
         resp_embed = discord.Embed(
             title="Where do you want to receive the help page?",
             description="Here? or in DMs?",
-            color=discord.Color.magenta()
+            color=discord.Color.blurple()
         )
         resp_embed.set_footer(text=f"Cleaner#8788 v{config.BOT_VERSION}")
         await interaction.response.send_message(embed=resp_embed, view=ChangelogButtons())
