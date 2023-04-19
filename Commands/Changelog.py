@@ -1,11 +1,12 @@
-import discord
-import aiosqlite
 import config
+import sqlite3
+import discord
 
 from discord import app_commands
 from discord.ext import commands
-from discord.ui import View, button, Button
 from Interface.Buttons.ChangelogButtons import ChangelogButtons, ChangelogButtonsWithNotif
+
+database = sqlite3.connect("./Databases/data.db")
 
 class Changelog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -13,10 +14,8 @@ class Changelog(commands.Cog):
 
     @app_commands.command(name="changelog", description="See what's new")
     async def help(self, interaction: discord.Interaction):
-        database = await aiosqlite.connect("./Databases/data.db")
-        await database.execute("CREATE TABLE IF NOT EXISTS NotificationView (user_id, status, PRIMARY KEY (user_id))")
-        async with database.execute(f"SELECT status FROM NotificationView WHERE user_id = {interaction.user.id}") as cursor:
-            data = await cursor.fetchone()
+        database.execute("CREATE TABLE IF NOT EXISTS NotificationView (user_id, status, PRIMARY KEY (user_id))")
+        data = database.execute("SELECT status FROM NotificationView WHERE user_id = ?", (interaction.user.id,)).fetchone()
         if data is None:
             resp_embed = discord.Embed(
                 title="Where do you want to receive the changelog?",

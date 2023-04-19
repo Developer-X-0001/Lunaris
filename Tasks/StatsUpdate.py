@@ -9,10 +9,12 @@ class StatsUpdate(commands.Cog):
     async def update(self):
         await self.bot.wait_until_ready()
         guildcount_channel = self.bot.get_channel(1051190914145603704)
+        shardcount_channel = self.bot.get_channel(1098210629191471214)
         membercount_channel = self.bot.get_channel(1051191049453838447)
         latency_channel = self.bot.get_channel(1051191221042810980)
 
-        await guildcount_channel.edit(name=f"Guild Count: {len(self.bot.guilds)}")
+        await guildcount_channel.edit(name=f"Server Count: {len(self.bot.guilds)}")
+        await shardcount_channel.edit(name=f"Shard Count: {self.bot.shard_count}")
         membercount = 0
         for guild in self.bot.guilds:
             membercount += guild.member_count

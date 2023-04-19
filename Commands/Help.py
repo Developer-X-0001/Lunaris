@@ -1,9 +1,12 @@
+import config
+import sqlite3
 import discord
-import aiosqlite
+
 from discord import app_commands
 from discord.ext import commands
 from Interface.Buttons.HelpButtons import HelpButtons, HelpButtonsWithNotif
-import config
+
+database = sqlite3.connect("./Databases/data.db")
 
 class Help(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -11,10 +14,7 @@ class Help(commands.Cog):
 
     @app_commands.command(name="help", description="Get a list of available commands")
     async def help(self, interaction: discord.Interaction):
-        database = await aiosqlite.connect("./Databases/data.db")
-        await database.execute("CREATE TABLE IF NOT EXISTS NotificationView (user_id, status, PRIMARY KEY (user_id))")
-        async with database.execute(f"SELECT status FROM NotificationView WHERE user_id = {interaction.user.id}") as cursor:
-            data = await cursor.fetchone()
+        data = database.execute("SELECT status FROM NotificationView WHERE user_id = ?", (interaction.user.id,)).fetchone()
         if data is None:
             resp_embed = discord.Embed(
                 title="Where do you want to receive the help page?",

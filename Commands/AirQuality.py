@@ -1,7 +1,8 @@
-import pycountry
-import requests
-import discord
 import config
+import discord
+import requests
+import pycountry
+
 from discord.ext import commands
 from discord import app_commands
 
@@ -20,6 +21,7 @@ class AirQuality(commands.Cog):
     async def aqi(self, interaction: discord.Interaction, location: str, hidden: app_commands.Choice[int]):
         request_url = requests.get(f"http://api.weatherapi.com/v1/current.json?key={config.WEATHER_API_KEY}&q={location}&aqi=yes")
         response = request_url.json()
+        print(response)
         
         location = response["location"]
         weather = response["current"]
@@ -88,6 +90,15 @@ class AirQuality(commands.Cog):
             await interaction.response.send_message(embed=aqi_embed, ephemeral=True)
         if hidden.value == 0:
             await interaction.response.send_message(embed=aqi_embed)
+    
+    @aqi.autocomplete('location')
+    async def aqi_autocomplete_callback(self, interaction: discord.Interaction, current: str):
+        response = requests.get('http://api.weatherapi.com/v1/search.json?key=051eefb6b3cf4d9a9b691536231904&q={}'.format(current))
+        result = response.json()
+
+        return [
+            app_commands.Choice(name=f"{i['name']}, {i['region']}, {i['country']}", value=f"{i['lat']},{i['lon']}") for i in result
+        ]
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

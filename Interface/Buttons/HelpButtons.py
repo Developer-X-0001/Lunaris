@@ -1,10 +1,12 @@
-import aiosqlite
+import sqlite3
 import discord
 import config
 
 from discord.ui import View, button, Button
 from Interface.Embeds.HelpEmbed import help_embed
 from Interface.Embeds.NotificationEmbed import notification_embed
+
+database = sqlite3.connect("./Databases/data.db")
 
 class HelpButtons(View):
     def __init__(self):
@@ -40,11 +42,9 @@ class HelpButtonsWithNotif(View):
     
     @button(label="View Notification", style=discord.ButtonStyle.red, emoji="<:notif:1051183724655554680>", custom_id="help_notif")
     async def help_notif(self, interaction: discord.Interaction, button: Button):
-        database = await aiosqlite.connect("./Databases/data.db")
         notification_embed.set_thumbnail(url=interaction.client.user.avatar.url)
-        await database.execute(f"INSERT INTO NotificationView VALUES ({interaction.user.id}, 'viewed') ON CONFLICT (user_id) DO UPDATE SET status = 'viewed' WHERE user_id = {interaction.user.id}")
-        await database.commit()
-        await interaction.response.edit_message(content="<:done:954610357727543346> **Notification Viewed**", embed=notification_embed, view=HelpGoBackButtons())
+        database.execute("INSERT INTO NotificationView VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET status = ? WHERE user_id = ?", (interaction.user.id, 'viewed', 'viewed', interaction.user.id,)).connection.commit()
+        await interaction.response.edit_message(content="<:done:1051184732173520916> **Notification Viewed**", embed=notification_embed, view=HelpGoBackButtons())
         
 class HelpGoBackButtons(View):
     def __init__(self):

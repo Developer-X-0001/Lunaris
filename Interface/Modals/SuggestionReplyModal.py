@@ -1,6 +1,9 @@
-import aiosqlite
+import sqlite3
 import discord
+
 from discord.ui import Modal
+
+database = sqlite3.connect("./Databases/data.db")
 
 class SuggestionReplyModal(Modal, title="Report/Suggestion Reply"):
     def __init__(self):
@@ -14,8 +17,7 @@ class SuggestionReplyModal(Modal, title="Report/Suggestion Reply"):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        async with interaction.client.database.execute(f"SELECT user_id, title, content, upvotes, downvotes FROM ReportsAndSuggestions WHERE message_id = {interaction.message.id}") as cursor:
-            data = await cursor.fetchone()
+        data = database.execute(f"SELECT user_id, title, content, upvotes, downvotes FROM ReportsAndSuggestions WHERE message_id = ?", (interaction.message.id,)).fetchone()
         if data is None:
             await interaction.response.send_message("<:error:1051184730248335410> Oops! Something went wrong...", ephemeral=True)
             return

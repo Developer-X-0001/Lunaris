@@ -1,10 +1,12 @@
-import discord
-import aiosqlite
 import config
+import sqlite3
+import discord
 
 from discord.ui import View, button, Button
 from Interface.Embeds.ChangelogEmbed import changelog_embed
 from Interface.Embeds.NotificationEmbed import notification_embed
+
+database = sqlite3.connect("./Databases/data.db")
 
 class ChangelogButtons(View):
     def __init__(self):
@@ -38,12 +40,10 @@ class ChangelogButtonsWithNotif(View):
         except:
             await interaction.response.edit_message(content="<:error:1051184730248335410> Your DMs are closed!", embed=None, view=None)
     
-    @button(label="View Notification", style=discord.ButtonStyle.red, emoji="<:notif:1051183724655554680>", custom_id="help_notif")
-    async def help_notif(self, interaction: discord.Interaction, button: Button):
-        database = await aiosqlite.connect("./Databases/data.db")
+    @button(label="View Notification", style=discord.ButtonStyle.red, emoji="<:notif:1051183724655554680>", custom_id="changelog_notif")
+    async def changelog_notif(self, interaction: discord.Interaction, button: Button):
         notification_embed.set_thumbnail(url=interaction.client.user.avatar.url)
-        await database.execute(f"INSERT INTO NotificationView VALUES ({interaction.user.id}, 'viewed') ON CONFLICT (user_id) DO UPDATE SET status = 'viewed' WHERE user_id = {interaction.user.id}")
-        await database.commit()
+        database.execute("INSERT INTO NotificationView VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET status = ? WHERE user_id = ?", (interaction.user.id, 'viewed', 'viewed', interaction.user.id,)).connection.commit()
         await interaction.response.edit_message(content="<:done:1051184732173520916> **Notification Viewed**", embed=notification_embed, view=ChangelogGoBackButtons())
 
 class ChangelogGoBackButtons(View):

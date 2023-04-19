@@ -1,8 +1,10 @@
+import time
+import config
 import discord
-import datetime, time
+import datetime
+
 from discord import app_commands
 from discord.ext import commands
-import config
 
 startTime = time.time()
 

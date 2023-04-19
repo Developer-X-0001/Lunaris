@@ -1,14 +1,17 @@
-import requests
+import json
+import config
 import discord
+import requests
 import pycountry
+
 from discord import app_commands
 from discord.ext import commands
-import config
+from opencage.geocoder import OpenCageGeocode
 
 class Weather(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        
+
     @app_commands.command(name="weather", description="Get up to date current weather information.")
     @app_commands.describe(location="Type the city name", hidden="Choose wether to show information publicly or privately.")
     @app_commands.choices(
@@ -105,6 +108,16 @@ class Weather(commands.Cog):
             await interaction.response.send_message(embed=weather_embed, ephemeral=True)
         if hidden.value == 0:
             await interaction.response.send_message(embed=weather_embed)
+        
+
+    @weather.autocomplete('location')
+    async def weather_autocomplete_callback(self, interaction: discord.Interaction, current: str):
+        response = requests.get('http://api.weatherapi.com/v1/search.json?key=051eefb6b3cf4d9a9b691536231904&q={}'.format(current))
+        result = response.json()
+
+        return [
+            app_commands.Choice(name=f"{i['name']}, {i['region']}, {i['country']}", value=f"{i['lat']},{i['lon']}") for i in result
+        ]
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(

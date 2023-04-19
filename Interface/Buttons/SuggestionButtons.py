@@ -1,8 +1,11 @@
-import aiosqlite
+import sqlite3
 import discord
-from discord.ui import View, button, Button
+
 from discord import ButtonStyle
+from discord.ui import View, button, Button
 from Interface.Modals.SuggestionReplyModal import SuggestionReplyModal
+
+database = sqlite3.connect("./Databases/data.db")
 
 class SuggestionButtons(View):
     def __init__(self):
@@ -18,14 +21,12 @@ class SuggestionButtons(View):
     
     @button(style=ButtonStyle.gray, emoji="<:upvote:1051208253184430100>", custom_id="upvote_button")
     async def upvote_button(self, interaction: discord.Interaction, button: Button):
-        await interaction.client.database.execute(f"UPDATE ReportsAndSuggestions SET upvotes = upvotes + 1 WHERE message_id = {interaction.message.id}")
-        await interaction.client.database.commit()
+        database.execute("UPDATE ReportsAndSuggestions SET upvotes = upvotes + 1 WHERE message_id = ?", (interaction.message.id,)).connection.commit()
         await interaction.response.send_message(content="<:done:1051184732173520916> Success!", ephemeral=True)
     
     @button(style=ButtonStyle.gray, emoji="<:downvote:1051208251271815168>", custom_id="downvote_button")
     async def downvote_button(self, interaction: discord.Interaction, button: Button):
-        await interaction.client.database.execute(f"UPDATE ReportsAndSuggestions SET downvotes = downvotes + 1 WHERE message_id = {interaction.message.id}")
-        await interaction.client.database.commit()
+        database.execute("UPDATE ReportsAndSuggestions SET downvotes = downvotes + 1 WHERE message_id = ?", (interaction.message.id,)).connection.commit()
         await interaction.response.send_message(content="<:done:1051184732173520916> Success!", ephemeral=True)
     
     @button(style=ButtonStyle.red, emoji="✖", custom_id="delete_suggestion")
@@ -33,8 +34,7 @@ class SuggestionButtons(View):
         await interaction.response.defer()
         mod_role = interaction.guild.get_role(1051186674627002409)
         if mod_role in interaction.user.roles:
-            await interaction.client.database.execute(f"DELETE FROM ReportsAndSuggestions WHERE message_id = {interaction.message.id}")
-            await interaction.client.database.commit()
+            database.execute("DELETE FROM ReportsAndSuggestions WHERE message_id = ?", (interaction.message.id,)).connection.commit()
             await interaction.message.delete()
         else:
             await interaction.followup.send(content="<:error:1051184730248335410> MissingPermissions, You aren't authorized to do that!", ephemeral=True)

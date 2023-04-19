@@ -1,8 +1,9 @@
-import pycountry
-import requests
+import config
 import discord
 import datetime
-import config
+import requests
+import pycountry
+
 from discord.ext import commands
 from discord import app_commands
 
@@ -39,8 +40,7 @@ class Astro(commands.Cog):
 
         # ---------- Time Data ----------
         timezone = location["tz_id"]
-        get_time = location["localtime_epoch"]
-        localtime = datetime.datetime.fromtimestamp(get_time).strftime("%I:%M %p")
+        localtime = location["localtime"]
 
         # ---------- Astronomical Data ----------
         astroData = response["astronomy"]
@@ -90,6 +90,15 @@ class Astro(commands.Cog):
             await interaction.response.send_message(embed=astro_embed, ephemeral=True)
         if hidden.value == 0:
             await interaction.response.send_message(embed=astro_embed)
+    
+    @astronomy.autocomplete('location')
+    async def astronomy_autocomplete_callback(self, interaction: discord.Interaction, current: str):
+        response = requests.get('http://api.weatherapi.com/v1/search.json?key=051eefb6b3cf4d9a9b691536231904&q={}'.format(current))
+        result = response.json()
+
+        return [
+            app_commands.Choice(name=f"{i['name']}, {i['region']}, {i['country']}", value=f"{i['lat']},{i['lon']}") for i in result
+        ]
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(

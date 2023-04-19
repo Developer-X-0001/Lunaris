@@ -2,3 +2,4 @@ __pycache__/
 config.py
 data.db
 desktop.ini
+test.py

@@ -1,7 +1,10 @@
-import traceback
-import aiosqlite
+import sqlite3
 import discord
+import traceback
+
 from Interface.Buttons.ReportButtons import ReportButtons
+
+database = sqlite3.connect("./Databases/data.db")
 
 class BugReport(discord.ui.Modal, title="Report"):
     heading = discord.ui.TextInput(
@@ -32,9 +35,8 @@ class BugReport(discord.ui.Modal, title="Report"):
         suggestion_embed.set_footer(text=f"Sent from, Guild: {interaction.guild.name} | Members: {interaction.guild.member_count}")
 
         msg = await channel.send(embed=suggestion_embed, view=ReportButtons())
-        await interaction.client.database.execute(f'INSERT INTO ReportsAndSuggestions VALUES ({interaction.guild.id}, {interaction.user.id}, {msg.id}, "{self.heading}", "{self.report}", 0, 0)')
+        database.execute("INSERT INTO ReportsAndSuggestions VALUES (?, ?, ?, ?, ?, ?, ?)", (interaction.guild.id, interaction.user.id, msg.id, self.heading.value, self.report.value, 0, 0,)).connection.commit()
         await interaction.response.send_message("<:thankyou:1051209155144335521> Your report has been sent!", ephemeral=True)
-        await interaction.client.database.commit()
         return
 
     async def on_error(self, interaction: discord.Interaction, error: Exception):
