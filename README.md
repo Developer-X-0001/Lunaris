@@ -3,8 +3,9 @@
 
 [![Alt text](https://i.imgur.com/OYxIIxE.png)](https://discord.gg/cca2PXMmHH)
 
-# **Changelog v1.0:**
-- Launched Lunaris!
+# **Changelog v1.1:**
+- Added autocomplete on all commands!
+- Bug fixes
 ##### For further information use command /changelog or /help
 
 # **Commands:**
