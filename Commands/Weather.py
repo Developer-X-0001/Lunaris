@@ -1,4 +1,3 @@
-import json
 import config
 import discord
 import requests
@@ -6,7 +5,6 @@ import pycountry
 
 from discord import app_commands
 from discord.ext import commands
-from opencage.geocoder import OpenCageGeocode
 
 class Weather(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
