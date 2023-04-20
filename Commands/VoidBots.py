@@ -24,7 +24,7 @@ class StatsUpload(commands.Cog):
             #"shard_count": len(self.bot.shards) #Uncomment this line if shards are used.
             }) as r:
                 json = await r.json()
-                print(json['message'])
+                print(json)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(

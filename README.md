@@ -1,10 +1,11 @@
-# **Welcome to Lunaris#1303 🌙 (v1.0)**
+# **Welcome to Lunaris#1303 🌙 (v1.1)**
 *Lunaris is jam-packed with meteorological commands. You can get the most recent weather information, history and forecast information, astronomical information, air quality information, and much more!*
 
 [![Alt text](https://i.imgur.com/OYxIIxE.png)](https://discord.gg/cca2PXMmHH)
 
-# **Changelog v1.0:**
-- Launched Lunaris!
+# **Changelog v1.1:**
+- Added autocomplete on all commands!
+- Bug fixes
 ##### For further information use command /changelog or /help
 
 # **Commands:**

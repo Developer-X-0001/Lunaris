@@ -21,7 +21,6 @@ class AirQuality(commands.Cog):
     async def aqi(self, interaction: discord.Interaction, location: str, hidden: app_commands.Choice[int]):
         request_url = requests.get(f"http://api.weatherapi.com/v1/current.json?key={config.WEATHER_API_KEY}&q={location}&aqi=yes")
         response = request_url.json()
-        print(response)
         
         location = response["location"]
         weather = response["current"]
